@@ -13,13 +13,14 @@ from kernels import *
 
 Yte = []
 
-#Define model hyperparameters best suited for each dataset 
-#(To modify regarding the model used)
-#SVR
-#lambda_ = [100, 100, 100]
-#k = [9, 9, 8]
-#KLR
-lambda_ = [1e-10, 1e-10, 1e-10]
+#Define model hyperparameters best suited for each dataset (To modify regarding the model used)
+
+#lambda_ = [100, 100, 100] #SVR
+lambda_ = [1e-10, 1e-10, 1e-10] #KLR
+
+#k = [9, 9, 8] #Mismatch Kernel 
+#nb_mismatch = 0 #Mismatch Kernel 
+#degree = [4, 4, 4] #Polynomial Kernel 
 
 #Iterate over the 3 data sets
 for i in range(3):
@@ -38,8 +39,9 @@ for i in range(3):
     x_test = read_embedded_data(f"./data/Xte{i}_mat100.csv") 
 
     #Create kernel
-    #kernel = MK(k = k[i])
-    kernel = GK()
+    #kernel = MismatchKernel(k = k[i])
+    #kernel = GaussianKernel()
+    kernel = PolynomialKernel()
 
     #Create model
     #model = SVR(lambda_ = lambda_[i], kernel = kernel) 

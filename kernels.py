@@ -10,38 +10,65 @@ class PolynomialKernel:
     '''
     def __init__(self, degree):
         self.degree = degree
+        self.x_train = None
 
-    def create_kernel_matrix(self, x1, x2):
+    def create_kernel_matrix(self, x):
         '''
         Return a similarity matrix, measuring similarity between vectors in X1 and in X2.
         The similarity is computed using the gaussian kernel.
         '''
-        m = np.zeros((x1.shape[0], x2.shape[0]))
-        for i, row1 in enumerate(x1):
-            for j, row2 in enumerate(x2):
-                m[i, j] = np.dot(row1, row2)**degree
-        return m   
+        if self.x_train is None:
+            self.x_train = x
+            m = np.zeros((x.shape[0], x.shape[0]))
+            for i, row1 in enumerate(x):
+                for j, row2 in enumerate(x):
+                    m[i, j] = np.dot(row1, row2)**self.degree
+            return m   
+        else:
+            m = np.zeros((x.shape[0], self.x_train.shape[0]))
+            for i, row1 in enumerate(x):
+                for j, row2 in enumerate(self.x_train):
+                    m[i, j] = np.dot(row1, row2)**self.degree
+            return m    
 
-class GK:
+class GaussianKernel:
     '''
     Gaussian Kernel
+    Attributes
+        gamma : hyparameter 
+                It can be set equals to 1/(x_train.shape[1] * x_train.var()), 
+                with x_train.shape[1] the dimension of data points and x_train.var() the points' variance/dispersion
+
+        x_fit : Save training points 
     '''
     def __init__(self):
         self.gamma = None
+        self.x_train = None
 
-    def create_kernel_matrix(self, x1, x2):
+    def create_kernel_matrix(self, x):
         '''
         Return a similarity matrix, measuring similarity between vectors in X1 and in X2.
         The similarity is computed using the gaussian kernel.
         '''
-        m = np.zeros((x1.shape[0], x2.shape[0]))
-        for i, row1 in enumerate(x1):
-            for j, row2 in enumerate(x2):
-                m[i, j] = np.exp(-self.gamma * np.dot(row1 - row2, row1 - row2))
-        return m   
+        if self.x_train is None:
+            self.x_train = x
+            self.gamma = 1/(self.x_train.shape[1] * self.x_train.var())
+            m = np.zeros((x.shape[0], x.shape[0]))
+            for i, row1 in enumerate(x):
+                for j, row2 in enumerate(x):
+                    m[i, j] = np.exp(-self.gamma * np.dot(row1 - row2, row1 - row2))
+            return m   
+        else:
+            m = np.zeros((x.shape[0], self.x_train.shape[0]))
+            for i, row1 in enumerate(x):
+                for j, row2 in enumerate(self.x_train):
+                    m[i, j] = np.exp(-self.gamma * np.dot(row1 - row2, row1 - row2))
+            return m   
+
+        
 
 
-class MK:
+class MismatchKernel:
     '''
     The mismatch Kernel
     Attributes :

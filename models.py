@@ -6,21 +6,19 @@ from cvxopt import matrix
 from numpy import linalg as LA
 import numpy as np
 
-class KLR:
+class KRR:
     '''
-    Kernel Logistic Regression
+    Kernel Ridge Regression
     Attributes:
         alpha : Solution of the optimization problem
         lambda_ : Regularization parameter
         kernel : Used kernel 
         fitted : Indicator describing whether the model is already fitted 
-        x_fit : Save training points 
     '''
     def __init__(self, lambda_, kernel):
         self.kernel = kernel
         self.lambda_ = lambda_
         self.alpha = None
-        self.x_fit = None
         self.fitted = False
     
     def fit(self, x_train, y_train):
@@ -31,14 +29,11 @@ class KLR:
         x_train = x_train.values
         y_train = y_train['Bound'].values
 
-        n, m = x_train.shape
-
         #We compute the closed form solution of the optimization problem
-        self.kernel.gamma = 1/(m * x_train.var())
-        K = self.kernel.create_kernel_matrix(x_train, x_train)
-        self.alpha = np.dot(LA.inv((K + self.lambda_ * n * np.identity(n))), y_train)
+        K = self.kernel.create_kernel_matrix(x_train)
+        self.alpha = np.dot(LA.inv((K + self.lambda_ * x_train.shape[0] * np.identity(x_train.shape[0]))), y_train)
         self.fitted = True
-        self.x_fit = x_train
+
         return self
 
     def predict(self, x_test):
@@ -51,16 +46,9 @@ class KLR:
         if not(self.fitted):
             raise Error("The estimator needs to be fitted before calling self.predict().")
 
-        K = self.kernel.create_kernel_matrix(x_test, self.x_fit)
+        K = self.kernel.create_kernel_matrix(x_test)
         return np.dot(K, self.alpha)
     
-    
-class KRR:
-    """
-    Kernel Ridge Regression
-    """
-    #TO DO
-
 class SVR:
     '''
     Support Vector Regression

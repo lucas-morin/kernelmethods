@@ -11,23 +11,21 @@ from tools import *
 from models import *
 from kernels import *
 
-#Define model hyperparameters best suited 
-#(To modify regarding the model used)
-#SVR
-lambda_ = 100
-k = 9
-nb_mismatch = 0
-#KLR
-#lambda_ = 1e-10
+#Define model hyperparameters best suited (To modify regarding the model used)
+lambda_ = 100 #SVR
+#lambda_ = 1e-10 #KLR
+#k = 9 #Mismatch Kernel 
+#nb_mismatch = 0 #Mismatch Kernel 
+degree = 7 #Polynomial Kernel 
 
 #Choose a dataset
 i = 1
 
 #Read training data
-x_train = pd.read_csv(f"./data/Xtr{i}.csv", index_col=0)
-y_train = pd.read_csv(f"./data/Ytr{i}.csv", index_col=0)
-#x_train = read_embedded_data(f"./data/Xtr{i}_mat100.csv") 
+#x_train = pd.read_csv(f"./data/Xtr{i}.csv", index_col=0)
 #y_train = pd.read_csv(f"./data/Ytr{i}.csv", index_col=0)
+x_train = read_embedded_data(f"./data/Xtr{i}_mat100.csv") 
+y_train = pd.read_csv(f"./data/Ytr{i}.csv", index_col=0)
 
 #Augment training data (optional)
 #x_train, y_train = augment(x_train, y_train)
@@ -36,8 +34,9 @@ y_train = pd.read_csv(f"./data/Ytr{i}.csv", index_col=0)
 x_train, x_validation, y_train, y_validation = train_test_split(x_train, y_train, train_size=0.8, test_size=0.2)
 
 #Create kernel
-kernel = MK(k = k, nb_mismatch = nb_mismatch)
-#kernel = GK()
+#kernel = MismatchKernel(k = k, nb_mismatch = nb_mismatch)
+#kernel = GaussianKernel()
+kernel = PolynomialKernel(degree = degree)
 
 #Create model
 model = SVR(lambda_ = lambda_, kernel = kernel) 
@@ -50,8 +49,8 @@ y_train = y_train.applymap(lambda x: 1 if (x == 1) else -1)
 model.fit(x_train, y_train)
 
 #Predict new labels
-predictions_train = (model.fast_predict(x_train) > 0).astype(int)  
-predictions_validation = (model.fast_predict(x_validation) > 0).astype(int)  
+predictions_train = (model.predict(x_train) > 0).astype(int)  
+predictions_validation = (model.predict(x_validation) > 0).astype(int)  
 
 #Come back to 0, 1 labels
 y_train = y_train.applymap(lambda x: 1 if (x == 1) else 0)
@@ -59,6 +58,3 @@ y_train = y_train.applymap(lambda x: 1 if (x == 1) else 0)
 #Measure performances
 print(f"The training accuracy is {accuracy_score(y_train, predictions_train)}")
 print(f"The validation accuracy is {accuracy_score(y_validation, predictions_validation)}")
-
-
-
