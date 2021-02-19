@@ -4,7 +4,6 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, log_loss, confusion_matrix
 
 #Import source code functions
 from tools import *
@@ -21,6 +20,7 @@ lambda_ = [1e-10, 1e-10, 1e-10] #KLR
 #k = [9, 9, 8] #Mismatch Kernel 
 #nb_mismatch = 0 #Mismatch Kernel 
 #degree = [4, 4, 4] #Polynomial Kernel 
+#gamma = [None, None, None] #Gaussian Kernel 
 
 #Iterate over the 3 data sets
 for i in range(3):
@@ -40,8 +40,8 @@ for i in range(3):
 
     #Create kernel
     #kernel = MismatchKernel(k = k[i])
-    #kernel = GaussianKernel()
-    kernel = PolynomialKernel()
+    #kernel = GaussianKernel(gamma = gamma[i])
+    kernel = PolynomialKernel(degree = degree[i])
 
     #Create model
     #model = SVR(lambda_ = lambda_[i], kernel = kernel) 

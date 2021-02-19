@@ -29,7 +29,7 @@ class KRR:
         x_train = x_train.values
         y_train = y_train['Bound'].values
 
-        #We compute the closed form solution of the optimization problem
+        #The closed form solution of the optimization problem is computed
         K = self.kernel.create_kernel_matrix(x_train)
         self.alpha = np.dot(LA.inv((K + self.lambda_ * x_train.shape[0] * np.identity(x_train.shape[0]))), y_train)
         self.fitted = True
@@ -40,13 +40,14 @@ class KRR:
         '''
         x_test is a dataframe
         '''
-        #Change data type
+        #Change input type
         x_test = x_test.values
 
         if not(self.fitted):
             raise Error("The estimator needs to be fitted before calling self.predict().")
 
         K = self.kernel.create_kernel_matrix(x_test)
+        #The prediction function is expressed using the representer theorem
         return np.dot(K, self.alpha)
     
 class SVR:
@@ -126,7 +127,7 @@ class SVR:
         if not self.fitted:
             raise SVMNotFitError 
         
-        #Change data type
+        #Change input type
         x_test = x_test.values
         
         K = self.kernel.create_kernel_matrix(x_test)
@@ -141,7 +142,7 @@ class SVR:
         if not self.fitted:
             raise SVMNotFitError 
         
-        #Change data type
+        #Change input type
         x_test = x_test.values
 
         partial_alpha = self.alpha[self.support_indices]
