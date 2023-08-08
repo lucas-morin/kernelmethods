@@ -1,7 +1,7 @@
 # Kernel Methods for Machine Learning
 
 The goal of the project is to perform a classification task using kernel methods.
-We want to predict whether a given DNA sequence is bounded or unbounded for a transcriptionfactor of interest.  
+We want to predict whether a given DNA sequence is bounded or unbounded for a transcription factor of interest.  
 Three data sets are given, corresponding to three different transcription factors. Each transcription factor describe a new classification task, then, three different predictive models should be implemented.
 
 Learning algorithms are implemented "from scratch", only using optimization librairies.
